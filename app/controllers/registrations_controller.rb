@@ -9,17 +9,21 @@ class RegistrationsController < ApplicationController
     render_with_scope :new
   end
 
+  # Overriding the default devise create action
+  # instead of signing in, we just redirect to the new users domain
   # POST /resource
   def create
+    logger.info "OVERRIDDEN CREATE"
     build_resource
 
     if resource.save
       set_flash_message :notice, :signed_up
-      sign_in_and_redirect(resource_name, resource)
+      redirect_to after_sign_in_path_for(resource)
     else
       render_with_scope :new
     end
   end
+
 
   # GET /resource/edit
   def edit
